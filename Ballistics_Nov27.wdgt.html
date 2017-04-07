@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+  <head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta http-equiv="X-UA-Compatible" content="chrome=1,IE=edge" />
+	<title>Ballistics_Nov27</title>
+	<style>
+		body {
+			background-color: #FFFFFF;
+			margin: 0px;
+		}
+	</style>
+
+	<!-- copy these lines to your document head: -->
+
+	<style>
+    @font-face {
+        font-family: 'avenir';
+        src:              url('Ballistics_Nov27.wdgt.hyperesources/avenir.ttf') format('truetype'),
+            
+    }
+</style>
+
+	<script type="text/javascript" src="Ballistics_Nov27.wdgt.hyperesources/easeljs-0.6.0.min.js"></script>
+	<script type="text/javascript" src="Ballistics_Nov27.wdgt.hyperesources/movieclip-0.6.0.min.js"></script>
+	<script type="text/javascript" src="Ballistics_Nov27.wdgt.hyperesources/preloadjs-0.3.0.min.js"></script>
+	<script type="text/javascript" src="Ballistics_Nov27.wdgt.hyperesources/tweenjs-0.4.0.min.js"></script>
+	<script type="text/javascript" src="Ballistics_Nov27.wdgt.hyperesources/TweenMax.min.js"></script>
+	<script type="text/javascript" src="Ballistics_Nov27.wdgt.hyperesources/ballistics4cs6.js"></script>
+	<script type="text/javascript" src="Ballistics_Nov27.wdgt.hyperesources/jquery-1.9.1.js"></script>
+	<script type="text/javascript" src="Ballistics_Nov27.wdgt.hyperesources/erg.js"></script>
+
+<meta name="viewport" content="user-scalable=1.0,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="format-detection" content="telephone=no">
+	
+<style>
+body {
+background-color: #FFFFFF;
+margin: 0px;
+}
+.HYPE_scene {-webkit-tap-highlight-color: rgba(0,0,0,0); }
+</style>
+
+ 
+<script type="text/javascript" src="AppleClasses/AppleWidget.js"> </script>
+
+<script>
+    function myCallback(hypeDocument, element, event) {
+    // Get the name of the document. This is also on line 5 of the generated javascript file. 
+    window.DocumentName = hypeDocument.documentName();
+    }
+
+    if("HYPE_eventListeners" in window === false) {
+    window.HYPE_eventListeners = Array();
+    }
+    window.HYPE_eventListeners.push({"type":"HypeDocumentLoad", "callback":myCallback});
+</script>
+
+<script type="text/javascript">
+    widget.pauseAudioVisual = function() {
+    // Go to the Quiet scene when closing a widget
+   // HYPE.documents[DocumentName].showSceneNamed("quietscene");
+    };
+
+    widget.didEnterWidgetMode = function() {
+    // When reopening the widget, go back to the first scene
+    HYPE.documents[DocumentName].showSceneNamed("intro");
+    };
+</script>
+	
+	<!-- end copy -->
+
+  </head>
+  <body>
+	<div style ="margin:auto;width:1024px">
+
+
+	
+	<!-- copy these lines to your document: -->
+
+	<div id="ballisticsnov27_hype_container" style="position:relative;overflow:hidden;width:1024px;height:768px;-webkit-tap-highlight-color: rgba(0,0,0,0);">
+		<script type="text/javascript" charset="utf-8" src="Ballistics_Nov27.wdgt.hyperesources/ballisticsnov27_hype_generated_script.js?39920"></script>
+	</div>
+
+	<!-- end copy -->
+
+
+	</div>
+  </body>
+</html>

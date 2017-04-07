@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Ballistics</title>
+
+<script src="easeljs-0.6.0.min.js"></script>
+<script src="tweenjs-0.4.0.min.js"></script>
+<script src="movieclip-0.6.0.min.js"></script>
+<script src="preloadjs-0.3.0.min.js"></script>
+<script src="ballistics4cs6.js"></script>
+<script src="TweenMax.min.js"></script>  
+
+<style>
+    
+    @font-face {
+    font-family: 'avenir';
+  
+    src: url('avenir.ttf') format('truetype'),
+       
+    font-weight: normal;
+    font-style: normal;
+
+}
+    
+    </style>  
+
+<script>
+var canvas, stage, exportRoot,hit1,chosen,result,l_ox,l_oy,l_fx,l_fy;
+var informed=false;
+var halfInformed = false;
+var stillUp  = true;
+var info1 = parent.document.getElementById("info1");
+var info2 = parent.document.getElementById("info2");
+var info3 = parent.document.getElementById("info3");
+var info4 = parent.document.getElementById("info4");
+var info5 = parent.document.getElementById("info5");
+var enough = parent.document.getElementById("enough");
+var result = parent.document.getElementById("result");
+
+
+
+
+
+function init() {
+		chosen=0;
+	canvas = document.getElementById("canvas");
+	images = images||{};
+
+	var manifest = [
+		
+		
+		{src:"bullet1.png", id:"bullet1"},
+		{src:"bullet2.png", id:"bullet2"},
+		{src:"bullet3.png", id:"bullet3"},
+		{src:"Buton_3_selected.png", id:"Buton_3_selected"},
+		{src:"BUTTONS_1Selected.png", id:"BUTTONS_1Selected"},
+		{src:"BUTTONS_2_selected.png", id:"BUTTONS_2_selected"},
+		{src:"BUTTONS_unselected.png", id:"BUTTONS_unselected"},
+		{src:"circle.png", id:"circle"},
+	
+		{src:"MATCHBUTTON_OFF.png", id:"MATCHBUTTON_OFF"},
+		{src:"MATCH_BUTTON_ON.png", id:"MATCH_BUTTON_ON"},
+	
+		{src:"S0904.jpg", id:"S0904"},
+		{src:"S1103.jpg", id:"S1103"},
+		{src:"U1006.jpg", id:"U1006"},
+		{src:"u6_doctored2.jpg", id:"u6_doctored2"},
+	
+	];
+
+	var loader = new createjs.LoadQueue(false);
+	loader.addEventListener("fileload", handleFileLoad);
+	loader.addEventListener("complete", handleComplete);
+	loader.loadManifest(manifest);
+}
+
+function handleFileLoad(evt) {
+	if (evt.item.type == "image") { images[evt.item.id] = evt.result; }
+}
+
+function handleComplete() {
+	exportRoot = new lib.ballistics4cs6();
+
+	stage = new createjs.Stage(canvas);
+
+	createjs.Touch.enable(stage,true,false);
+
+	//stop bullet chosen mc at first frame
+
+	exportRoot.bullet_chosen.gotoAndStop(0);
+
+	//show info 1 and 2
+	
+	TweenMax.allTo([info1,info2],0,{alpha:0});
+	TweenMax.allTo([info1,info2],.8,{alpha:1,delay:1});
+	
+	//hide 3,4,5
+	
+	TweenMax.allTo([info3,info4,info5],0,{alpha:0});
+  info5.parentNode.style.zIndex=1;
+
+	
+	
+	
+	
+
+    // hide match button
+
+	exportRoot.match_btn.alpha=0;
+
+	//set up left bullet start position
+
+	exportRoot.left.x = 450;
+	exportRoot.left.y = 401;
+	
+	console.log ("enough"+exportRoot);
+
+	//set up bullet hitArea
+
+	  hit1 =  new createjs.Shape();
+    hit1.graphics.beginFill("#000").drawRect(-142,-292,284,584);
+    exportRoot.dsl.hitArea = hit1;
+    exportRoot.dsr.hitArea = hit1;
+
+    //set up bulletscrolling
+
+
+
+//LEFT BULLET
+
+    exportRoot.dsl.onPress = function(evt){
+
+if (halfInformed == false && chosen !=0){
+//fade down 3 and 5
+
+
+TweenMax.allTo ([info3,info5],.5,{alpha:0,onComplete:setZ});
+showMatchButton();
+halfInformed = true;
+
+}
+TweenMax.killTweensOf(exportRoot.right,{y:true});
+
+    	if (informed ==true && stillUp == true){
+//fade down info 3 and 4 
+TweenMax.allTo ([info1,info2,info3,info4],.5,{alpha:0});
+stillUp = false;
+}
+
+
+
+	TweenMax.allTo ([result,enough],.5,{alpha:0,onComplete:resetRes});
+
+
+      //store left bullet orginal x and y position
+
+      l_ox = exportRoot.left.x;
+      l_oy = exportRoot.left.y;
+
+      //store xy of first press finger position
+
+      l_fx = evt.stageX;
+      l_fy = evt.stageY;
+ 
+      // add handlers directly to the event object:
+    evt.onMouseMove = function(evt) {
+      
+       var dx,dy;
+
+       dy = evt.stageY - l_fy;
+       dx = evt.stageX - l_fx; 
+
+       console.log ("dx:"+dx + "dy:"+dy );
+
+       exportRoot.left.x = l_ox + dx;
+       exportRoot.left.y = l_oy + dy;
+
+         }
+    evt.onMouseUp = function(evt) { console.log("up"); }
+    };
+
+
+ //// right bullet  
+
+
+
+      exportRoot.dsr.onPress = function(evt){
+
+      	if (halfInformed == false && chosen !=0){
+//fade down 3 and 5
+
+TweenMax.allTo ([info3, info5],.5,{alpha:0,onComplete:setZ});
+showMatchButton();
+halfInformed = true;
+
+}
+
+
+      	//kill Tween if still going on
+
+      	TweenMax.killTweensOf(exportRoot.right,{y:true});
+
+      	if (informed ==true && stillUp == true){
+
+	//fade down info 3 and 4 
+
+TweenMax.allTo ([info1,info2,info3,info4],.5,{alpha:0});
+
+stillUp = false;
+}
+
+
+
+  TweenMax.allTo ([result,enough],.5,{alpha:0,onComplete:resetRes});
+
+
+ //store right bullet orginal x and y position
+
+      r_ox = exportRoot.right.x;
+      r_oy = exportRoot.right.y;
+
+      //store xy of first press finger position
+
+      r_fx = evt.stageX;
+      r_fy = evt.stageY;
+
+        
+      // add handlers directly to the event object:
+    evt.onMouseMove = function(evt) {
+       var dx,dy;
+
+       dy = evt.stageY - r_fy;
+       dx = evt.stageX - r_fx; 
+
+       exportRoot.right.x = r_ox + dx;
+       exportRoot.right.y = r_oy + dy;
+        
+         }
+    evt.onMouseUp = function(evt) { console.log("up"); }
+    };
+
+
+	stage.addChild(exportRoot);
+
+//// set up bullet buttons
+
+exportRoot.b1.name = "bullet1";
+exportRoot.b1.onPress = bulletPressed; 
+exportRoot.b2.name = "bullet2";
+exportRoot.b2.onPress = bulletPressed; 
+exportRoot.b3.name = "bullet3";
+exportRoot.b3.onPress = bulletPressed; 
+
+
+
+// set up match button
+
+exportRoot.match_btn.onPress = function (e){
+
+
+	if (informed ==true){
+
+
+			if ( stillUp == true){
+			//fade down inf0 3 and 4 
+			TweenMax.allTo ([info3,info4,info5],.5,{alpha:0,onComplete:setZ});
+			stillUp = false;
+  
+   			}
+
+
+ 
+
+  		if (chosen==1){
+
+  	 //tween into best match position
+
+  		TweenMax.to (exportRoot.left,.5,{x:505,y:401});
+ 		 TweenMax.to (exportRoot.right,.5,{x:537,y:393});
+
+  		//say well done..
+		//exportRoot.result.gotoAndStop(0);
+    parent.document.getElementById("resText").innerHTML = "Well done! You found the matching bullets.";
+ 		TweenMax.to (result,.5,{alpha:1,scaleX:1.1,scaleY:1.1});
+    enough.parentNode.style.zIndex=100;
+ 		TweenMax.to (enough,.5,{alpha:1,scaleX:1.1,scaleY:1.1});
+ 
+
+		}else if (chosen==2  || chosen == 3){
+
+		// say bad luck
+
+		//exportRoot.result.gotoAndStop(1);
+     parent.document.getElementById("resText").innerHTML = "Sorry! These bullets<div>do not match.</div>";
+		TweenMax.to (result,.5,{alpha:1,scaleX:1.1,scaleY:1.1});
+
+		}
+
+	}
+
+}
+
+
+
+
+	stage.update();
+	stage.enableMouseOver();
+	createjs.Ticker.setFPS(30);
+	createjs.Ticker.addEventListener("tick", stage);
+}
+
+
+
+function bulletPressed (e){
+
+
+
+
+
+TweenMax.to (exportRoot.left,1,{alpha:1});
+
+
+console.log ("bullet pressed" + chosen);
+// if nothing chosen yet, fade of bubbles 1 and 2
+
+if (chosen == 0 ){
+
+//console.log ("here"+exportRoot.info1);
+
+	              //fade off 1 and 2
+
+                  TweenMax.allTo ([info1,info2],.5,{alpha:0});
+
+                  //fade up info 3
+
+                  TweenMax.to (info3,.5,{alpha:1,delay:1});
+
+                   slideInBullet (e.target.name);
+
+                   //bring up info5
+                   //set info 5 z index to 100
+                   info5.parentNode.style.zIndex = 100;
+                   TweenMax.to (info5,.5,{alpha:1,delay:1});
+
+
+
+                   TweenMax.to (exportRoot.right,1,{y:"+=50",repeat:2,yoyo:true,delay:1,ease:Power2.easeInOut});
+
+             
+
+
+
+               }else {
+
+                            if (informed ==true && stillUp == true){
+							 //fade down info 3 and 4 
+
+                              TweenMax.allTo ([info3,info4],.5,{alpha:0});
+
+                              stillUp = false;
+
+                            }
+                             
+
+	                                     
+                           TweenMax.allTo ([result,enough],.5,{alpha:0,onComplete:resetRes});
+                              
+
+                                slideInBullet (e.target.name);
+                }          
+}
+
+function slideInBullet (b){
+
+if (b=="bullet1"){
+
+chosen =1;
+exportRoot.bullet_chosen.gotoAndStop(1);
+exportRoot.right.gotoAndStop(0);
+
+}else if(b=="bullet2"){
+
+chosen =2;
+exportRoot.bullet_chosen.gotoAndStop(2);
+exportRoot.right.gotoAndStop(1);
+
+}else if (b=="bullet3"){
+
+chosen =3;
+exportRoot.bullet_chosen.gotoAndStop(3);
+exportRoot.right.gotoAndStop(2);
+
+
+}
+
+    exportRoot.right.x=1252;
+    exportRoot.right.y=384;
+    TweenMax.to(exportRoot.right,1,{x:600,y:384});
+
+}
+
+function showMatchButton(){
+
+
+         //hide inf05 here
+
+          //fade up info 4 and match button
+
+          TweenMax.to (info4,.5,{alpha:1,delay:1});
+          
+        
+
+          TweenMax.to (exportRoot.match_btn,1,{alpha:1,delay:1,onComplete:function(){informed=true; console.log ("informed");}});
+
+
+}
+
+function resetRes(){
+
+	console.log("reset res");
+
+TweenMax.allTo ([result,enough],0,{scaleX:1,scaleY:1});
+enough.parentNode.style.zIndex=2;
+}
+
+
+function setZ(){
+
+info5.parentNode.style.zIndex=1;
+
+
+
+}
+
+
+
+</script>
+</head>
+
+<body onload="init();" style="background-color:#D4D4D4">
+	<canvas id="canvas" width="1024" height="768" style="position:absolute; left:0px; top:0px;"></canvas>
+</body>
+</html>
